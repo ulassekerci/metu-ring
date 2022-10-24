@@ -24,8 +24,8 @@ const Home: NextPage = () => {
   // 0 means nothing, 1 means ok, 2 means json is empty, 3 means errored
 
   const updateRingData = async () => {
-    const apiReq = await fetch('/api/ring')
     try {
+      const apiReq = await fetch('/api/ring')
       const json = await apiReq.text()
       if (json === '') {
         setStatus(2)
