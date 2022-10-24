@@ -1,6 +1,7 @@
 import type { NextPage } from 'next'
 import { useEffect, useState } from 'react'
 import Map, { Marker } from 'react-map-gl'
+import DataBar from '../components/DataBar'
 
 interface ringDataType {
   lat: string
@@ -17,21 +18,28 @@ interface ringDataType {
 
 const Home: NextPage = () => {
   const [ringData, setRingData] = useState<ringDataType[] | null>(null)
-  const [ringPins, setRingPins] = useState<null | JSX.Element[]>(null)
+  const [ringPins, setRingPins] = useState<JSX.Element[] | null>(null)
+  const [status, setStatus] = useState(0)
+  // 0 means nothing, 1 means ok, 2 means json is empty, 3 means errored
 
   const updateRingData = async () => {
     const apiReq = await fetch('/api/ring')
     try {
-      const data = await apiReq.json()
-      setRingData(data)
+      const json = await apiReq.text()
+      if (json === '') {
+        setStatus(2)
+      } else {
+        setRingData(JSON.parse(json))
+        setStatus(1)
+      }
     } catch (error) {
-      //handle error
+      setStatus(3)
     }
   }
 
   useEffect(() => {
-    if (!ringData) updateRingData()
-    const interval = setInterval(updateRingData, 5000)
+    updateRingData()
+    const interval = setInterval(updateRingData, 10000)
     return () => clearInterval(interval)
   }, [])
 
@@ -49,9 +57,9 @@ const Home: NextPage = () => {
     <>
       <Map
         initialViewState={{
-          longitude: 32.7803,
-          latitude: 39.8952,
-          zoom: 13.5,
+          longitude: 32.778,
+          latitude: 39.892,
+          zoom: 13.2,
         }}
         style={{ height: '100vh' }}
         mapStyle='mapbox://styles/mapbox/streets-v11'
@@ -59,6 +67,7 @@ const Home: NextPage = () => {
       >
         {ringPins}
       </Map>
+      {status >= 2 && <DataBar status={status} />}
     </>
   )
 }
