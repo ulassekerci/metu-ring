@@ -17,6 +17,7 @@ interface ringDataType {
 }
 
 const Home: NextPage = () => {
+  const [darkMode, setDarkMode] = useState(false)
   const [ringData, setRingData] = useState<ringDataType[] | null>(null)
   const [ringPins, setRingPins] = useState<JSX.Element[] | null>(null)
   const [status, setStatus] = useState(0)
@@ -38,6 +39,7 @@ const Home: NextPage = () => {
   }
 
   useEffect(() => {
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) setDarkMode(true)
     updateRingData()
     const interval = setInterval(updateRingData, 10000)
     return () => clearInterval(interval)
@@ -62,7 +64,7 @@ const Home: NextPage = () => {
           zoom: 13.2,
         }}
         style={{ height: '100vh' }}
-        mapStyle='mapbox://styles/mapbox/streets-v11'
+        mapStyle={darkMode ? 'mapbox://styles/mapbox/dark-v10' : 'mapbox://styles/mapbox/streets-v11'}
         mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_API_KEY}
       >
         {ringPins}
