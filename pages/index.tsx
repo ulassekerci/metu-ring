@@ -1,4 +1,5 @@
 import type { NextPage } from 'next'
+import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import Map, { Marker } from 'react-map-gl'
 import DataBar from '../components/DataBar'
@@ -57,6 +58,9 @@ const Home: NextPage = () => {
 
   return (
     <>
+      <Head>
+        <title>Ring Tracker</title>
+      </Head>
       <Map
         initialViewState={{
           longitude: 32.778,
